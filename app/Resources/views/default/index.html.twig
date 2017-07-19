@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="wrapper">
+        <div class="container">
+            <div class="col-md-4">
+                <form action="{{ path('homepage') }}" method="get">
+                    <div class="form-group">
+                        <label for="keywords">Search:</label>
+                        <input type="text" class="form-control" name="keywords" id="keywords" value="{{ searchKeywords }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="minPrice">Min Price:</label>
+                        <select name="minPrice" class="form-control" id="minPrice">
+                            <option value="">Select</option>
+                            <option value="10" {{ minPrice == 10 ? 'selected="selected"' : '' }}>10</option>
+                            <option value="50" {{ minPrice == 50 ? 'selected="selected"' : '' }}>50</option>
+                            <option value="100" {{ minPrice == 100 ? 'selected="selected"' : '' }}>100</option>
+                            <option value="500" {{ minPrice == 500 ? 'selected="selected"' : '' }}>500</option>
+                            <option value="1000" {{ minPrice == 1000 ? 'selected="selected"' : '' }}>1000</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxPrice">Max Price:</label>
+                        <select name="maxPrice" class="form-control" id="maxPrice">
+                            <option value="">Select</option>
+                            <option value="10" {{ maxPrice == 10 ? 'selected="selected"' : '' }}>10</option>
+                            <option value="50" {{ maxPrice == 50 ? 'selected="selected"' : '' }}>50</option>
+                            <option value="100" {{ maxPrice == 100 ? 'selected="selected"' : '' }}>100</option>
+                            <option value="500" {{ maxPrice == 500 ? 'selected="selected"' : '' }}>500</option>
+                            <option value="1000" {{ maxPrice == 1000 ? 'selected="selected"' : '' }}>1000</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sort">Sort:</label>
+                        <select name="sort" class="form-control" id="sort">
+                            {% for key, sort in sortData %}
+                                <option value="{{ key }}" {{ sortTerm == key ? 'selected="selected"' : '' }}>{{ sort }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+            </div>
+            <div class="col-md-8">
+                {% if pager.currentPageResults is defined %}
+                    {% for product in pager.currentPageResults %}
+                        <div class="list-group row">
+                            <div class="col-md-2">
+                                <img src="{{ product.mainPhotoUrl }}" alt="{{ product.title }}">
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-8">
+                                <p><a href="{{ product.clickOutLink }}" target="_blank">{{ product.title }}</a></p>
+                                <p>Current price: {{ product.price ~ ' ' ~ product.priceCurrency }}</p>
+                                <p>Shipping price: {{ product.shippingPrice ~ ' ' ~ product.priceCurrency }}</p>
+                                <p>Ends Date: {{ product.validUntil|date('d.m.Y') }}</p>
+                            </div>
+                        </div>
+                        <hr />
+                    {% else %}
+                        <div class="col-md-4"></div>
+                        <div class="col-md-8">
+                            <h3>No results found!</h3>
+                        </div>
+                    {% endfor %}
+
+                    {% if pager.currentPageResults|length > 0 %}
+                        <div class="pagerfanta">
+                            {{ pagerfanta(pager, 'twitter_bootstrap3') }}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                        <h3>Start your search!</h3>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+<style>
+    #wrapper { background: #FFF; padding: 2em; max-width: 800px; width: 95%; }
+</style>
+{% endblock %}
