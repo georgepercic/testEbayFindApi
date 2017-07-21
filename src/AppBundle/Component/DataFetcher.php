@@ -4,6 +4,7 @@ namespace AppBundle\Component;
 
 use AppBundle\Factory\EbayProductFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
 
 /**
@@ -128,15 +129,19 @@ class DataFetcher
      */
     private function getPaginatedResults(array $data, int $page)
     {
-        $adapter = new ArrayAdapter($data);
-        $pager = new Pagerfanta($adapter);
+        try {
+            $adapter = new ArrayAdapter($data);
+            $pager = new Pagerfanta($adapter);
 
-        $pager
-            ->setMaxPerPage(10)
-            ->setCurrentPage($page);
+            $pager
+                ->setMaxPerPage(10)
+                ->setCurrentPage($page);
 
-        $pager->haveToPaginate();
+            $pager->haveToPaginate();
 
-        return $pager;
+            return $pager;
+        } catch (NotValidCurrentPageException $exception) {
+            return;
+        }
     }
 }
